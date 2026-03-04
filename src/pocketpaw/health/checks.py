@@ -206,7 +206,8 @@ def check_api_key_primary() -> HealthCheckResult:
                 "and add it in Settings > API Keys, or set ANTHROPIC_API_KEY env var."
             ),
             details=[
-                "Anthropic's policy prohibits third-party use of OAuth tokens from Free/Pro/Max plans.",
+                "Anthropic's policy prohibits third-party use of OAuth tokens"
+                " from Free/Pro/Max plans.",
                 "Get an API key from https://console.anthropic.com/api-keys",
                 "Set it in PocketPaw Settings > API Keys, or as ANTHROPIC_API_KEY env var.",
                 "Alternatively, switch to Ollama (Local) for free local inference.",
@@ -819,7 +820,10 @@ def check_version_update() -> HealthCheckResult:
                 category="updates",
                 status="warning",
                 message=f"Update available: v{current} \u2192 v{latest}",
-                fix_hint=f"Run: pip install --upgrade pocketpaw  |  Changelog: github.com/pocketpaw/pocketpaw/releases/tag/v{latest}",
+                fix_hint=(
+                    f"Run: pip install --upgrade pocketpaw  |  "
+                    f"Changelog: github.com/pocketpaw/pocketpaw/releases/tag/v{latest}"
+                ),
             )
 
         return HealthCheckResult(

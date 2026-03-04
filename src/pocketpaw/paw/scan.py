@@ -40,7 +40,7 @@ async def run_agent_scan(soul: Soul, project_path: Path, provider: str) -> None:
     reading files and storing discoveries in the soul's memory.
     """
 
-    prompt = SCAN_PROMPT.format(project_path=project_path)
+    SCAN_PROMPT.format(project_path=project_path)
 
     # For now, delegate to heuristic scan + remember.
     # Full agent-powered scan requires wiring AgentRouter which is a bigger lift.

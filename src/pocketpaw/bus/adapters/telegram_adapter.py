@@ -154,8 +154,10 @@ class TelegramAdapter(BaseChannelAdapter):
             # We should probably accumulate or ignore 'is_stream_chunk' unless we do live editing.
             # For simplicity in Phase 2, we IGNORE stream chunks and only send the final message?
             # OR we implement a simple buffer.
-            # `AgentLoop` sends "is_stream_chunk=True" for deltas, and "is_stream_end=True" (empty) at end.
-            # BUT, it DOESN'T validly send the "Full" message as a separate event in current loop implementation.
+            # `AgentLoop` sends "is_stream_chunk=True" for deltas,
+            # and "is_stream_end=True" (empty) at end.
+            # BUT, it DOESN'T validly send the "Full" message as a
+            # separate event in current loop implementation.
             # Loop implementation:
             #   - Yields chunks.
             #   - DOES NOT yield full text outbound message.
@@ -188,7 +190,8 @@ class TelegramAdapter(BaseChannelAdapter):
                 # Helper: Let's hack it. If it's a stream chunk, we ignore it for Telegram
                 # UNLESS we implement the "Live Edit" feature.
                 # Users expect streaming.
-                # Let's Implement a crude accumulator or just rely on `AgentLoop` sending the full thing?
+                # Let's Implement a crude accumulator or just rely on
+                # `AgentLoop` sending the full thing?
                 # The `AgentLoop` code I wrote:
                 #   current_response_text += text_chunk
                 #   publish_outbound(..., text_chunk, is_stream_chunk=True)
@@ -199,7 +202,8 @@ class TelegramAdapter(BaseChannelAdapter):
                 # I will modify `AgentLoop` to send the COMPLETE message at the end as well?
                 # Or just update the adapter to buffer?
                 # Let's update `AgentLoop` to be friendlier to non-streaming adapters?
-                # Actually, `AgentLoop` code is "Unified". Dashboard LOVES streaming. Telegram HATES it.
+                # Actually, `AgentLoop` code is "Unified". Dashboard
+                # LOVES streaming. Telegram HATES it.
                 # I should handle this in the Adapter.
 
                 # Simple Buffer Implementation:

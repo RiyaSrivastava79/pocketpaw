@@ -16,7 +16,7 @@ try:
     import qrcode
     import qrcode.image.svg
     import uvicorn
-    from fastapi import FastAPI, Form, Request
+    from fastapi import FastAPI, Form
     from fastapi.responses import HTMLResponse
 except ImportError as _exc:
     raise ImportError(
@@ -116,7 +116,8 @@ async def _handle_pairing_start(update: Update, context: ContextTypes.DEFAULT_TY
     logger.info(f"✅ Paired with user: {username} ({user_id})")
 
     await update.message.reply_text(
-        "🎉 **Connected!**\n\nPocketPaw is now paired with this device.\nYou can close the browser window now.",
+        "🎉 **Connected!**\n\nPocketPaw is now paired with this device."
+        "\nYou can close the browser window now.",
         parse_mode="Markdown",
     )
 
@@ -226,7 +227,10 @@ def create_app(settings: Settings) -> FastAPI:
             margin-top: 16px;
             animation: fadeIn 0.5s ease-out;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .api-keys {
             margin-top: 16px;
             text-align: left;
@@ -251,10 +255,13 @@ def create_app(settings: Settings) -> FastAPI:
                 <span class="step-number">1</span>
                 <strong>Create a Telegram Bot</strong>
                 <p style="color: #888; font-size: 14px; margin-top: 8px;">
-                    Open <a href="https://t.me/BotFather" target="_blank" style="color: #667eea;">@BotFather</a> 
+                    Open <a href="https://t.me/BotFather"
+                        target="_blank"
+                        style="color: #667eea;">@BotFather</a>
                     on Telegram and send <code>/newbot</code>
                 </p>
-                <input type="text" name="bot_token" placeholder="Paste your bot token here..." required>
+                <input type="text" name="bot_token"
+                    placeholder="Paste your bot token here..." required>
             </div>
             
             <div class="step api-keys">

@@ -621,7 +621,6 @@ class FileMemoryStore:
                 tmp.write_text(json.dumps(session_data, indent=2), encoding="utf-8")
                 # On Windows, os.replace can fail with PermissionError if another
                 # process briefly holds the file handle. Retry a few times.
-                import platform
                 import time as _time
 
                 for _attempt in range(5):
@@ -631,7 +630,7 @@ class FileMemoryStore:
                     except PermissionError:
                         if _attempt == 4:
                             raise
-                        _time.sleep(0.01 * (2 ** _attempt))
+                        _time.sleep(0.01 * (2**_attempt))
                 return session_data
 
             session_data = await asyncio.to_thread(_read_and_append)

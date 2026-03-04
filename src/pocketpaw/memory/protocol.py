@@ -3,11 +3,11 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Protocol
 
 
-class MemoryType(str, Enum):
+class MemoryType(StrEnum):
     """Types of memory entries."""
 
     LONG_TERM = "long_term"  # Facts, preferences, important info

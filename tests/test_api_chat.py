@@ -171,8 +171,8 @@ class TestSSEFormat:
 
         for event_block in events:
             lines = event_block.split("\n")
-            event_line = next((l for l in lines if l.startswith("event:")), None)
-            data_line = next((l for l in lines if l.startswith("data:")), None)
+            event_line = next((line for line in lines if line.startswith("event:")), None)
+            data_line = next((line for line in lines if line.startswith("data:")), None)
 
             assert event_line is not None, f"Missing 'event:' line in SSE block: {event_block!r}"
             assert data_line is not None, f"Missing 'data:' line in SSE block: {event_block!r}"

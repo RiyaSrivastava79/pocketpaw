@@ -286,7 +286,8 @@ class TestClaudeSDKCliAuth:
         from pocketpaw.llm.client import resolve_llm_client as real_resolve
 
         settings = Settings(agent_backend="claude_agent_sdk", smart_routing_enabled=False)
-        sdk = ClaudeSDKBackend(settings)
+        with patch("shutil.which", return_value="/usr/bin/claude"):
+            sdk = ClaudeSDKBackend(settings)
 
         resolved_providers: list[str] = []
 

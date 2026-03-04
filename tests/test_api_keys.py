@@ -130,7 +130,10 @@ class TestAPIKeyManager:
         record, plaintext = manager.create("expired", expires_at="2020-01-01T00:00:00+00:00")
         assert manager.verify(plaintext) is None
 
-    @pytest.mark.skipif(sys.platform == "win32", reason="Unix file permissions not available on Windows")
+    @pytest.mark.skipif(
+        sys.platform == "win32",
+        reason="Unix file permissions not available on Windows",
+    )
     def test_file_permissions(self, manager):
         import os
 

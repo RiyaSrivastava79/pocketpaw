@@ -63,7 +63,8 @@ class TunnelManager:
             installed = await self.install()
             if not installed:
                 raise RuntimeError(
-                    "cloudflared is not installed and auto-installation failed. Please run 'brew install cloudflared'."
+                    "cloudflared is not installed and auto-installation failed."
+                    " Please run 'brew install cloudflared'."
                 )
 
         if self.process:
@@ -130,10 +131,13 @@ class TunnelManager:
 
                 # Check for URL
                 # Example output: ... trycloudflare.com ...
-                # or: +--------------------------------------------------------------------------------------------+
-                #     |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
-                #     |  https://musical-example-domain.trycloudflare.com                                       |
-                #     +--------------------------------------------------------------------------------------------+
+                # or: +----------------------------------------------+
+                #     |  Your quick Tunnel has been created! Visit   |
+                #     |  it at (it may take some time to be          |
+                #     |  reachable):                                 |
+                #     |  https://musical-example-domain              |
+                #     |            .trycloudflare.com                |
+                #     +----------------------------------------------+
 
                 match = url_pattern.search(line)
                 if match:

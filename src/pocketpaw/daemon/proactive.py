@@ -97,7 +97,8 @@ class ProactiveDaemon:
 
         self._started = True
         logger.info(
-            f"ProactiveDaemon started with {len(self.intention_store.get_enabled())} enabled intentions"
+            "ProactiveDaemon started with "
+            f"{len(self.intention_store.get_enabled())} enabled intentions"
         )
 
     def stop(self) -> None:

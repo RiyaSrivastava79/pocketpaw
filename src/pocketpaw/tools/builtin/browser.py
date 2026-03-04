@@ -72,7 +72,10 @@ class BrowserTool(BaseTool):
                 },
                 "ref": {
                     "type": "integer",
-                    "description": "Element reference number from snapshot (required for 'click' and 'type' actions)",
+                    "description": (
+                        "Element reference number from snapshot"
+                        " (required for 'click' and 'type' actions)"
+                    ),
                 },
                 "text": {
                     "type": "string",

@@ -22,12 +22,6 @@ async def verify_audit():
     log_path = audit_logger.log_path
     print(f"Log path: {log_path}")
 
-    # Clear log for clarity (optional, but good for test)
-    if log_path.exists():
-        initial_siz = log_path.stat().st_size
-    else:
-        initial_siz = 0
-
     # 3. Execute Tool
     print("Executing 'shell' tool...")
     await registry.execute("shell", command="echo 'AUDIT CHECK'")
@@ -53,7 +47,7 @@ async def verify_audit():
                     found_attempt = True
                 elif entry.get("status") == "success":
                     found_success = True
-        except:
+        except (json.JSONDecodeError, KeyError):
             pass
 
     if found_attempt and found_success:
