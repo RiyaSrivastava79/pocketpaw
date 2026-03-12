@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 # In-memory task store (sufficient for single-process; Phase 3 may persist)
 # ---------------------------------------------------------------------------
 _MAX_TASKS = 1000
+# TODO(Phase 3): replace with a distributed store for multi-worker support
 _tasks: dict[str, Task] = {}
 _cancel_events: dict[str, asyncio.Event] = {}  # task_id → cancellation flag
 
@@ -50,9 +51,13 @@ _cancel_events: dict[str, asyncio.Event] = {}  # task_id → cancellation flag
 def _store_task(task: Task) -> None:
     """Store a task and prune old tasks to prevent memory leaks."""
     if len(_tasks) >= _MAX_TASKS:
-        oldest_id = next(iter(_tasks))
-        _tasks.pop(oldest_id, None)
-        _cancel_events.pop(oldest_id, None)
+        terminal = {TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELED}
+        evict_id = next(
+            (tid for tid, t in _tasks.items() if t.status.state in terminal),
+            next(iter(_tasks)),  # fallback: evict oldest if all are active
+        )
+        _tasks.pop(evict_id, None)
+        _cancel_events.pop(evict_id, None)
     _tasks[task.id] = task
 
 
@@ -381,10 +386,30 @@ async def tasks_send_stream(params: TaskSendParams):
 
             # Stream content chunks as working updates
             accumulated: list[str] = []
+            max_duration = 120.0
+            elapsed = 0.0
             while not cancel_event.is_set():
+                if elapsed >= max_duration:
+                    agent_reply = A2AMessage(
+                        role="agent",
+                        parts=[TextPart(text="Task timed out after 120 seconds.")],
+                    )
+                    failed_status = TaskStatus(state=TaskState.FAILED, message=agent_reply)
+                    _tasks[task_id].status = failed_status
+                    yield _format_sse(
+                        "task_status_update",
+                        {
+                            "id": task_id,
+                            "status": failed_status.model_dump(mode="json"),
+                            "final": True,
+                        },
+                    )
+                    break
+
                 try:
                     event = await asyncio.wait_for(bridge.queue.get(), timeout=1.0)
                 except TimeoutError:
+                    elapsed += 1.0
                     continue
 
                 if event["type"] == "chunk":
@@ -434,6 +459,8 @@ async def tasks_send_stream(params: TaskSendParams):
                     )
                     break
 
+        except asyncio.CancelledError:
+            pass  # client disconnected, finally block handles cleanup
         finally:
             await bridge.stop()
             _cancel_events.pop(task_id, None)
