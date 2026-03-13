@@ -26,7 +26,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN groupadd --system pocketpaw && \
     useradd --system --gid pocketpaw --create-home pocketpaw && \
-    mkdir -p /home/pocketpaw/.pocketpaw && \
+    mkdir -p /home/pocketpaw/.pocketpaw/identity \
+             /home/pocketpaw/.pocketpaw/memory && \
     chown -R pocketpaw:pocketpaw /home/pocketpaw
 
 USER pocketpaw
