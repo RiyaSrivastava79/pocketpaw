@@ -200,13 +200,15 @@ class DeepAgentsBackend:
             provider = "openai"
 
         elif provider == "litellm":
-            # LiteLLM has its own LangChain integration: ChatLiteLLM
-            if self.settings.litellm_api_base:
-                kwargs["api_base"] = self.settings.litellm_api_base
-            if self.settings.litellm_api_key:
-                kwargs["api_key"] = self.settings.litellm_api_key
+            # Route through LiteLLM proxy as OpenAI-compatible endpoint.
+            # The proxy exposes an OpenAI API, so we use the openai provider
+            # pointed at the proxy URL. This avoids needing langchain-litellm.
+            base = (self.settings.litellm_api_base or "http://localhost:4000").rstrip("/")
+            kwargs["base_url"] = f"{base}/v1"
+            kwargs["api_key"] = self.settings.litellm_api_key or "not-needed"
             if not model:
                 model = self.settings.litellm_model or ""
+            provider = "openai"
 
         # Map to LangChain's expected provider name
         lc_provider = _LANGCHAIN_PROVIDER_MAP.get(provider, provider)
