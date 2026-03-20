@@ -858,7 +858,7 @@ class ClaudeSDKBackend:
                 os.environ.pop(_strip_key, None)
             if sdk_env:
                 options_kwargs["env"] = sdk_env
-            if llm.is_ollama or llm.is_openai_compatible or llm.is_gemini or llm.is_litellm:
+            if is_non_anthropic:
                 options_kwargs["model"] = llm.model
 
             # ── Debug logging for troubleshooting SDK startup ──
