@@ -12,7 +12,11 @@
     children: Snippet;
   } = $props();
 
-  let open = $state(defaultOpen);
+  let open = $state(true);
+
+  $effect(() => {
+    open = defaultOpen;
+  });
 </script>
 
 <div class="mb-1">

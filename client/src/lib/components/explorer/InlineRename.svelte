@@ -11,7 +11,11 @@
   } = $props();
 
   let inputRef = $state<HTMLInputElement | null>(null);
-  let value = $state(fileName);
+  let value = $state("");
+
+  $effect(() => {
+    value = fileName;
+  });
 
   onMount(() => {
     if (!inputRef) return;

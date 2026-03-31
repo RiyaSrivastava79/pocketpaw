@@ -15,9 +15,13 @@
     "🦉", "🐸", "🌟", "⚡", "🔥", "💎", "🎯", "🍕",
   ];
 
-  let selected = $state(initialEmoji);
+  let selected = $state("🐾");
   let showGrid = $state(false);
   let justSelected = $state("");
+
+  $effect(() => {
+    selected = initialEmoji;
+  });
 
   function pick(emoji: string) {
     selected = emoji;

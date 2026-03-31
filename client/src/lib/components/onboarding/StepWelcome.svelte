@@ -9,8 +9,12 @@
     onNext: (name: string) => void;
   } = $props();
 
-  let name = $state(initialName);
+  let name = $state("");
   let showInput = $state(false);
+
+  $effect(() => {
+    name = initialName;
+  });
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === "Enter" && name.trim()) onNext(name.trim());

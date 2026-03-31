@@ -95,10 +95,10 @@
 
   function handleModelSelect(modelId: string) {
     selectedModel = modelId;
-    saveAndContinue();
+    void saveAndContinue();
   }
 
-  function saveAndContinue() {
+  async function saveAndContinue() {
     const provider = currentProvider;
     // Build the settings patch: API key + backend + model + provider fields
     const keyFieldMap: Record<string, string> = {
@@ -118,8 +118,13 @@
       [modelFieldMap[provider.backend]]: selectedModel,
     };
 
-    settingsStore.update(patch);
-    onComplete();
+    try {
+      await settingsStore.update(patch);
+      onComplete();
+    } catch (e) {
+      error = e instanceof Error ? e.message : "Failed to save provider settings.";
+      subStep = "key";
+    }
   }
 
   function backToKey() {

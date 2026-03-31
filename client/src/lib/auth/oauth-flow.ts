@@ -64,37 +64,42 @@ export async function startOAuthFlow(): Promise<OAuthResult> {
     }, FLOW_TIMEOUT_MS);
 
     // Register the event listener BEFORE opening the browser to avoid race conditions
-    listen<string>("oauth-redirect", async (event) => {
-      if (settled) return;
-
+    void (async () => {
       try {
-        const callbackUrl = new URL(event.payload);
-        const code = callbackUrl.searchParams.get("code");
-        const returnedState = callbackUrl.searchParams.get("state");
+        unlistenRedirect = await listen<string>("oauth-redirect", async (event) => {
+          if (settled) return;
 
-        if (!code) {
-          const error = callbackUrl.searchParams.get("error") || "No authorization code received.";
-          settle({ success: false, error });
-          return;
-        }
+          try {
+            const callbackUrl = new URL(event.payload);
+            const code = callbackUrl.searchParams.get("code");
+            const returnedState = callbackUrl.searchParams.get("state");
 
-        if (returnedState !== state) {
-          settle({ success: false, error: "State mismatch — possible CSRF attack." });
-          return;
-        }
+            if (!code) {
+              const error = callbackUrl.searchParams.get("error") || "No authorization code received.";
+              settle({ success: false, error });
+              return;
+            }
 
-        // Mark settled before async work to prevent races
-        settled = true;
-        cleanup();
+            if (returnedState !== state) {
+              settle({ success: false, error: "State mismatch — possible CSRF attack." });
+              return;
+            }
 
-        const tokens = await exchangeCodeForTokens(code, verifier, redirectUri);
-        await saveTokens(tokens);
-        resolve({ success: true, tokens });
+            // Mark settled before async work to prevent races
+            settled = true;
+            cleanup();
+
+            const tokens = await exchangeCodeForTokens(code, verifier, redirectUri);
+            await saveTokens(tokens);
+            resolve({ success: true, tokens });
+          } catch (err) {
+            settle({ success: false, error: `Token exchange failed: ${err}` });
+          }
+        });
       } catch (err) {
-        settle({ success: false, error: `Token exchange failed: ${err}` });
+        settle({ success: false, error: `Failed to register OAuth listener: ${err}` });
+        return;
       }
-    }).then(async (unlisten) => {
-      unlistenRedirect = unlisten;
 
       // Only open the browser AFTER the listener is registered
       try {
@@ -102,7 +107,7 @@ export async function startOAuthFlow(): Promise<OAuthResult> {
       } catch (err) {
         settle({ success: false, error: `Failed to open browser: ${err}` });
       }
-    });
+    })();
   });
 }
 

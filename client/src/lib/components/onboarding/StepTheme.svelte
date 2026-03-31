@@ -11,8 +11,12 @@
     onNext: (theme: string) => void;
   } = $props();
 
-  let selected = $state(initialTheme);
+  let selected = $state("system");
   let showCards = $state(false);
+
+  $effect(() => {
+    selected = initialTheme;
+  });
 
   const themes = [
     { id: "light", label: "Light", icon: Sun, preview: "bg-white", previewAccent: "bg-gray-200" },

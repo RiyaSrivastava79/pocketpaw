@@ -16,7 +16,7 @@
     onReady: () => void;
   } = $props();
 
-  let currentState = $state<BackendState>(initialState);
+  let currentState = $state<BackendState>("backend_missing");
   let installLogs = $state<string[]>([]);
   let error = $state<string | null>(null);
   let logContainer: HTMLDivElement | undefined = $state(undefined);

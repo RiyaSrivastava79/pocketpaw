@@ -27,11 +27,18 @@
     }) => void;
   } = $props();
 
-  let notifs = $state(initialPrefs.notifications_enabled);
-  let sound = $state(initialPrefs.sound_enabled);
-  let toolNotifs = $state(initialPrefs.tool_notifications_enabled);
-  let workspaceDir = $state(initialPrefs.default_workspace_dir);
+  let notifs = $state(true);
+  let sound = $state(true);
+  let toolNotifs = $state(true);
+  let workspaceDir = $state("");
   let showContent = $state(false);
+
+  $effect(() => {
+    notifs = initialPrefs.notifications_enabled;
+    sound = initialPrefs.sound_enabled;
+    toolNotifs = initialPrefs.tool_notifications_enabled;
+    workspaceDir = initialPrefs.default_workspace_dir;
+  });
 
   async function pickFolder() {
     if (!isTauri()) return;

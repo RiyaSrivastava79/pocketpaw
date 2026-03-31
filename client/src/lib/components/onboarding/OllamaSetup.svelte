@@ -102,30 +102,35 @@
       }
 
       status = "done";
-      saveAndContinue();
+      await saveAndContinue();
     } catch {
       error = "Download failed. Check that Ollama is running.";
       status = "found";
     }
   }
 
-  function saveAndContinue() {
-    settingsStore.update({
-      agent_backend: "claude_agent_sdk",
-      llm_provider: "ollama",
-      ollama_model: selectedModel,
-    });
-    onComplete();
+  async function saveAndContinue() {
+    try {
+      await settingsStore.update({
+        agent_backend: "claude_agent_sdk",
+        llm_provider: "ollama",
+        ollama_model: selectedModel,
+      });
+      onComplete();
+    } catch (e) {
+      error = e instanceof Error ? e.message : "Failed to save Ollama settings.";
+      status = "found";
+    }
   }
 
   function handleModelSelect(id: string) {
     selectedModel = id;
     if (installedNames.has(id)) {
       // Already installed — save and continue immediately
-      saveAndContinue();
+      void saveAndContinue();
     } else {
       // Not installed — start pull
-      pullModel();
+      void pullModel();
     }
   }
 

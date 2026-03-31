@@ -162,6 +162,7 @@
   let progress = $derived(duration > 0 ? (currentTime / duration) * 100 : 0);
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
   bind:this={containerEl}
   class="group relative flex h-full w-full items-center justify-center bg-black"
